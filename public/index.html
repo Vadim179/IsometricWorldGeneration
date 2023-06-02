@@ -6,9 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
     <script defer src="bundle.js"></script>
-    <title>Battle Of Empires</title>
+    <title>Perlin Map Generator</title>
   </head>
   <body>
-    <canvas id="canvas"></canvas>
+    <div id="main">
+      <div id="sidebar">
+        <div class="sidebar__header">
+          <h1>Generation Settings</h1>
+        </div>
+        <div class="sidebar__content">
+          <div class="sidebar__content__item">
+            <label for="size">Size</label>
+            <input type="range" id="size" value="32" min="16" max="64" step="1" />
+          </div>
+
+          <div class="sidebar__content__item">
+            <label for="background">Background</label>
+            <input type="color" id="background" value="#000000" />
+          </div>
+        </div>
+      </div>
+      <canvas id="canvas"></canvas>
+    </div>
   </body>
 </html>

@@ -1,34 +1,56 @@
-import { getCanvas, renderCanvas, clearCanvas, getContext } from "./Canvas"
+import { getCanvas, renderCanvas, clearCanvas, getContext } from "./Canvas";
 
-import { Assets } from "./Config/Assets.Config"
-import { TerrainConfig } from "./Config/Terrain.Config"
+import { Assets } from "./Assets";
+import { TerrainConfig } from "./__Config/Terrain.Config";
 
-import { loadAssets } from "./AssetLoader"
-import { generateTerrain, drawTerrain } from "./TerrainGenerator"
-
-const canvas = getCanvas()
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
+import { loadAssets } from "./AssetLoader";
+import { generateTerrain, drawTerrain } from "./TerrainGenerator";
 
 loadAssets(Assets).then(() => {
-  const { tileSize } = TerrainConfig
+  const canvas = getCanvas();
 
-  const context = getContext()
-  let terrain = generateTerrain()
+  let mapSize = 32;
+  let scale = 0.5;
+  let terrain = generateTerrain(mapSize);
 
-  let scale = 1
-  window.addEventListener("wheel", (event) => {
-    scale = Math.min(Math.max(0.5, scale + event.deltaY * -(1 / 1000)), 1.5)
-  })
+  // Initialize sidebar controls
+  const sidebar = document.getElementById("sidebar");
+  const canvasBackgroundColorPicker = document.querySelector("input#background");
 
-  renderCanvas(() => {
-    clearCanvas()
+  canvasBackgroundColorPicker.addEventListener("input", (e) => {
+    canvas.style.backgroundColor = e.target.value;
+    render();
+  });
 
-    context.save()
-    context.translate((innerWidth - tileSize * scale) / 2, innerHeight / 2)
-    context.scale(scale, scale)
+  const mapSizeInput = document.querySelector("input#size");
+  mapSizeInput.addEventListener("input", (e) => {
+    mapSize = e.target.value;
+    terrain = generateTerrain(mapSize);
+    render();
+  });
 
-    drawTerrain(terrain)
-    context.restore()
-  })
-})
+  addEventListener("wheel", (event) => {
+    scale = Math.min(Math.max(0.25, scale + event.deltaY * -(1 / 1000)), 1.5);
+    render();
+  });
+
+  // Initialize canvas size
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+
+  function render() {
+    clearCanvas();
+
+    const context = getContext();
+    context.save();
+    context.translate(
+      (innerWidth - TerrainConfig.tileSize * scale) / 2,
+      innerHeight / 2
+    );
+    context.scale(scale, scale);
+    drawTerrain(terrain);
+    context.restore();
+  }
+
+  render();
+});

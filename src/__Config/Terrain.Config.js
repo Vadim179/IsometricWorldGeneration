@@ -1,4 +1,4 @@
 export const TerrainConfig = Object.freeze({
   mapSize: 32,
-  tileSize: 64
+  tileSize: 128
 });
